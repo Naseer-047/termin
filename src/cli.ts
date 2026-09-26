@@ -29,6 +29,7 @@ export async function run() {
     .option('--contrast <number>', 'contrast adjustment (multiplier, e.g. 1.5)')
     .option('--invert', 'invert grayscale')
     .option('--no-color', 'disable color output')
+    .option('--no-animate', 'disable drawing animation')
     .option('--debug', 'show diagnostic information');
 
   program.parse();
@@ -108,8 +109,18 @@ export async function run() {
       channels
     });
 
+    const animate = options.animate !== false;
+
     console.log();
-    console.log(ascii);
+    if (animate) {
+      const lines = ascii.split('\n');
+      for (const line of lines) {
+        console.log(line);
+        await new Promise(resolve => setTimeout(resolve, 20)); // 20ms delay per line
+      }
+    } else {
+      console.log(ascii);
+    }
     console.log();
     
   } catch (err: any) {
