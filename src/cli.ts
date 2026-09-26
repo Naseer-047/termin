@@ -145,7 +145,7 @@ export async function run() {
   const isDefault = !source;
   
   if (isDefault) {
-    source = path.join(__dirname, '..', 'assets', 'default-photo.jpg');
+    source = path.join(__dirname, '..', 'assets', 'nobi.png');
   }
 
   try {
