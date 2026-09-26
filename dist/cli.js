@@ -129,7 +129,7 @@ async function run() {
     }
     const isDefault = !source;
     if (isDefault) {
-        source = path_1.default.join(__dirname, '..', 'assets', 'default-photo.jpg');
+        source = path_1.default.join(__dirname, '..', 'assets', 'nobi.png');
     }
     try {
         const termInfo = (0, terminal_1.getTerminalInfo)();
