@@ -11,6 +11,87 @@ const image_1 = require("./image");
 const ascii_1 = require("./ascii");
 const path_1 = __importDefault(require("path"));
 const fs_1 = __importDefault(require("fs"));
+const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+async function runKavanaSequence(ascii) {
+    const delay = 600;
+    console.clear();
+    console.log('\x1b[36m> Initializing visual system...\x1b[0m');
+    await sleep(delay);
+    console.log('\x1b[36m> Loading assets...\x1b[0m');
+    await sleep(delay);
+    console.log('\x1b[36m> Calibrating pixels...\x1b[0m');
+    await sleep(delay);
+    console.log('\x1b[36m> Mapping subject...\x1b[0m');
+    await sleep(delay * 2);
+    console.log();
+    process.stdout.write('Scanning ████████████████░░░░ 78%\r');
+    await sleep(1500);
+    process.stdout.write('Rendering ████████████████████ 100%\n');
+    await sleep(1000);
+    console.log();
+    console.log('\x1b[33m⚠ WARNING\x1b[0m');
+    console.log();
+    console.log('A highly recognizable subject has been detected.');
+    await sleep(1000);
+    console.log('Proceeding anyway...');
+    console.log('😂');
+    await sleep(2000);
+    console.clear();
+    console.log('\x1b[35mANALYSIS COMPLETE\x1b[0m');
+    console.log();
+    await sleep(800);
+    console.log('Poetry addiction      : DETECTED');
+    await sleep(800);
+    console.log('Drama level           : HIGH');
+    await sleep(800);
+    console.log('Random "Oiiii"        : FREQUENT');
+    await sleep(800);
+    console.log('Late replies          : CLASSIFIED');
+    await sleep(1500);
+    console.log('Attitude              : ███████████ 99%');
+    await sleep(3000);
+    console.log();
+    console.log('Preparing visual output...');
+    console.log();
+    await sleep(1000);
+    console.log('3...');
+    await sleep(1000);
+    console.log('2...');
+    await sleep(1000);
+    console.log('1...');
+    await sleep(1000);
+    console.clear();
+    console.log('\x1b[32mRendering subject...\x1b[0m');
+    await sleep(500);
+    console.log('░░░░░░░░░░░');
+    await sleep(300);
+    console.log('▒▒▒▒▒▒▒▒▒▒▒');
+    await sleep(300);
+    console.log('▓▓▓▓▓▓▓▓▓▓▓');
+    await sleep(300);
+    console.log('████████████');
+    await sleep(600);
+    console.clear();
+    const lines = ascii.split('\n');
+    for (const line of lines) {
+        console.log(line);
+        await sleep(20);
+    }
+    console.log();
+    console.log('\x1b[1m\x1b[36mSUBJECT IDENTIFIED:\x1b[0m');
+    console.log('\x1b[1m\x1b[32mKAVANA 🍃\x1b[0m');
+    await sleep(1500);
+    console.log();
+    console.log('\x1b[31mPOETRY RECOMMENDATION LEVEL: DANGEROUS 🎧\x1b[0m');
+    await sleep(2000);
+    console.log();
+    console.log("> That's it 😂");
+    await sleep(1500);
+    console.log("> You can stop staring at yourself now.");
+    await sleep(1500);
+    console.log();
+    console.log('Process exited successfully.');
+}
 async function run() {
     const packageJsonPath = path_1.default.join(__dirname, '..', 'package.json');
     let version = '1.0.0';
@@ -33,10 +114,19 @@ async function run() {
         .option('--invert', 'invert grayscale')
         .option('--no-color', 'disable color output')
         .option('--no-animate', 'disable drawing animation')
+        .option('--mode <mode>', 'special execution modes')
         .option('--debug', 'show diagnostic information');
     program.parse();
     const options = program.opts();
     let source = program.args[0];
+    let isKavanaMode = false;
+    if (source === 'kavana') {
+        isKavanaMode = true;
+        source = undefined;
+    }
+    else if (options.mode === 'personal') {
+        isKavanaMode = true;
+    }
     const isDefault = !source;
     if (isDefault) {
         source = path_1.default.join(__dirname, '..', 'assets', 'default-photo.jpg');
@@ -49,12 +139,10 @@ async function run() {
             if (isNaN(width) || width <= 0)
                 throw new Error('Invalid width');
         }
-        else if (isDefault) {
-            // User specifically requested default to be width 80
+        else if (isDefault || isKavanaMode) {
             width = 80;
         }
         else if (termInfo.width) {
-            // Use the full width of the terminal (minus 2 for a safe margin to avoid line wrapping)
             width = Math.max(10, termInfo.width - 2);
         }
         let height = undefined;
@@ -65,9 +153,7 @@ async function run() {
         }
         const brightness = options.brightness ? parseFloat(options.brightness) : undefined;
         const contrast = options.contrast ? parseFloat(options.contrast) : undefined;
-        // We default to color=true unless --no-color is specified
         const color = options.color !== false;
-        // For style resolving
         const style = options.style || 'auto';
         if (options.debug) {
             console.log('[DEBUG] Terminal Info:', termInfo);
@@ -102,7 +188,8 @@ async function run() {
                 chars = (0, presets_1.getPreset)(style);
             }
         }
-        const invert = options.invert !== undefined ? options.invert : isDefault;
+        // Default to true if it's the default or kavana mode, unless specified otherwise
+        const invert = options.invert !== undefined ? options.invert : (isDefault || isKavanaMode);
         const ascii = (0, ascii_1.renderAscii)(data, actualWidth, actualHeight, {
             chars,
             invert,
@@ -110,13 +197,17 @@ async function run() {
             style,
             channels
         });
+        if (isKavanaMode) {
+            await runKavanaSequence(ascii);
+            return;
+        }
         const animate = options.animate !== false;
         console.log();
         if (animate) {
             const lines = ascii.split('\n');
             for (const line of lines) {
                 console.log(line);
-                await new Promise(resolve => setTimeout(resolve, 20)); // 20ms delay per line
+                await sleep(20);
             }
         }
         else {
