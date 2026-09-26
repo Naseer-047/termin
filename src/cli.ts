@@ -214,7 +214,7 @@ export async function run() {
       contrast,
       color,
       style,
-      maxTerminalLines
+      maxTerminalLines: isKavanaMode ? undefined : maxTerminalLines
     });
 
     if (options.debug) {
