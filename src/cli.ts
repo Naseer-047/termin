@@ -6,7 +6,22 @@ import { renderAscii } from './ascii';
 import path from 'path';
 import fs from 'fs';
 
+import readline from 'readline';
+
 const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
+function askQuestion(query: string): Promise<string> {
+  const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout
+  });
+  return new Promise(resolve => {
+    rl.question(query, answer => {
+      rl.close();
+      resolve(answer);
+    });
+  });
+}
 
 async function runKavanaSequence(ascii: string) {
   const delay = 600;
@@ -22,19 +37,29 @@ async function runKavanaSequence(ascii: string) {
   await sleep(delay * 2);
   
   console.log();
-  process.stdout.write('Scanning ████████████████░░░░ 78%\r');
-  await sleep(1500);
-  process.stdout.write('Rendering ████████████████████ 100%\n');
+  process.stdout.write('Loading secret file... ░░░░░░░░░░░░░░░░░░░░ 0%\r');
+  await sleep(500);
+  process.stdout.write('Loading secret file... ████████░░░░░░░░░░░░ 40%\r');
+  await sleep(800);
+  process.stdout.write('Loading secret file... ███████████████░░░░░ 78%\r');
+  await sleep(1200);
+  process.stdout.write('Loading secret file... ████████████████████ 100%\n');
   await sleep(1000);
 
   console.log();
-  console.log('\x1b[33m⚠ WARNING\x1b[0m');
+  console.log('\x1b[33mWARNING 🚨\x1b[0m');
+  console.log('Highly recognizable human detected.');
   console.log();
-  console.log('A highly recognizable subject has been detected.');
-  await sleep(1000);
-  console.log('Proceeding anyway...');
-  console.log('😂');
-  await sleep(2000);
+  console.log('Would you like to continue?');
+  console.log('[Y] Yes');
+  console.log('[N] Obviously yes');
+  console.log();
+
+  await askQuestion('> ');
+
+  console.log();
+  console.log('Proceeding anyway... 😂');
+  await sleep(1500);
 
   console.clear();
   console.log('\x1b[35mANALYSIS COMPLETE\x1b[0m');
