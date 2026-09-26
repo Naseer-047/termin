@@ -65,15 +65,13 @@ async function runKavanaSequence(ascii: string) {
   console.log('\x1b[35mANALYSIS COMPLETE\x1b[0m');
   console.log();
   await sleep(800);
-  console.log('Poetry addiction      : DETECTED');
+  console.log('POETRY ADDICTION : DETECTED');
   await sleep(800);
-  console.log('Drama level           : HIGH');
+  console.log('BUSY STATUS      : ALWAYS');
   await sleep(800);
-  console.log('Random "Oiiii"        : FREQUENT');
-  await sleep(800);
-  console.log('Late replies          : CLASSIFIED');
+  console.log('INITIATION       : Apparently not supported for Naseer 💀');
   await sleep(1500);
-  console.log('Attitude              : ███████████ 99%');
+  console.log('ATTITUDE         : ███████████ 99%');
   await sleep(3000);
 
   console.log();
