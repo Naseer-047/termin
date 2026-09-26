@@ -132,7 +132,7 @@ export async function run() {
 
   const options = program.opts();
   
-  let source = program.args[0];
+  let source: string | undefined = program.args[0];
   let isKavanaMode = false;
   
   if (source === 'kavana') {
