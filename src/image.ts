@@ -10,6 +10,7 @@ export interface ImageProcessOptions {
   contrast?: number;
   color?: boolean;
   style?: string;
+  maxTerminalLines?: number;
 }
 
 export async function processImage(source: string, options: ImageProcessOptions): Promise<{ data: Buffer; width: number; height: number; channels: number }> {
@@ -39,9 +40,24 @@ export async function processImage(source: string, options: ImageProcessOptions)
   // Let the caller decide the aspect ratio correction, but by default it's 0.5
   // Wait, we can let ascii.ts handle the half-block logic if needed.
   if (!targetHeight) {
-    const CHAR_ASPECT_RATIO = options.color && options.style === 'blocks' ? 1.0 : 0.5;
+    const isBlocks = options.color && options.style === 'blocks';
+    const CHAR_ASPECT_RATIO = isBlocks ? 1.0 : 0.5;
     const originalAspect = metadata.height / metadata.width;
-    targetHeight = Math.round(targetWidth * originalAspect * CHAR_ASPECT_RATIO);
+    
+    let calcHeight = targetWidth * originalAspect * CHAR_ASPECT_RATIO;
+    let calcWidth = targetWidth;
+
+    if (options.maxTerminalLines) {
+      const renderedLines = isBlocks ? calcHeight / 2 : calcHeight;
+      if (renderedLines > options.maxTerminalLines) {
+        const scaleFactor = options.maxTerminalLines / renderedLines;
+        calcHeight *= scaleFactor;
+        calcWidth *= scaleFactor;
+      }
+    }
+    
+    targetHeight = Math.round(calcHeight);
+    targetWidth = Math.round(calcWidth);
   }
   
   targetWidth = Math.max(1, targetWidth);

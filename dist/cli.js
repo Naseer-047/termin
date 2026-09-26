@@ -72,13 +72,15 @@ async function run() {
             console.log('[DEBUG] Color:', color);
             console.log('[DEBUG] Options:', options);
         }
+        const maxTerminalLines = termInfo.height ? Math.max(10, termInfo.height - 4) : 40;
         const { data, width: actualWidth, height: actualHeight, channels } = await (0, image_1.processImage)(source, {
             width,
             height,
             brightness,
             contrast,
             color,
-            style
+            style,
+            maxTerminalLines
         });
         if (options.debug) {
             console.log(`[DEBUG] Processed Image: ${actualWidth}x${actualHeight} (Channels: ${channels})`);

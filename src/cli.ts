@@ -76,13 +76,16 @@ export async function run() {
       console.log('[DEBUG] Options:', options);
     }
     
+    const maxTerminalLines = termInfo.height ? Math.max(10, termInfo.height - 4) : 40;
+
     const { data, width: actualWidth, height: actualHeight, channels } = await processImage(source, {
       width,
       height,
       brightness,
       contrast,
       color,
-      style
+      style,
+      maxTerminalLines
     });
 
     if (options.debug) {
