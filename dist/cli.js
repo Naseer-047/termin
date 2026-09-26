@@ -39,7 +39,7 @@ async function run() {
     let source = program.args[0];
     const isDefault = !source;
     if (isDefault) {
-        source = path_1.default.join(__dirname, '..', 'assets', 'nobi.png');
+        source = path_1.default.join(__dirname, '..', 'assets', 'default-photo.jpg');
     }
     try {
         const termInfo = (0, terminal_1.getTerminalInfo)();
