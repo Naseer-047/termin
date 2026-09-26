@@ -37,8 +37,10 @@ export async function run() {
   const options = program.opts();
   
   let source = program.args[0];
-  if (!source) {
-    source = path.join(__dirname, '..', 'assets', 'default-photo.jpg');
+  const isDefault = !source;
+  
+  if (isDefault) {
+    source = path.join(__dirname, '..', 'assets', 'nobi.png');
   }
 
   try {
@@ -48,6 +50,9 @@ export async function run() {
     if (options.width) {
       width = parseInt(options.width, 10);
       if (isNaN(width) || width <= 0) throw new Error('Invalid width');
+    } else if (isDefault) {
+      // User specifically requested default to be width 80
+      width = 80;
     } else if (termInfo.width) {
       // Use the full width of the terminal (minus 2 for a safe margin to avoid line wrapping)
       width = Math.max(10, termInfo.width - 2); 
@@ -104,9 +109,11 @@ export async function run() {
       }
     }
 
+    const invert = options.invert !== undefined ? options.invert : isDefault;
+
     const ascii = renderAscii(data, actualWidth, actualHeight, {
       chars,
-      invert: options.invert || false,
+      invert,
       color,
       style,
       channels
