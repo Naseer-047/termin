@@ -69,7 +69,7 @@ async function runKavanaSequence(ascii: string) {
   await sleep(800);
   console.log('BUSY STATUS      : ALWAYS');
   await sleep(800);
-  console.log('INITIATION       : Apparently not supported for Naseer 💀');
+  console.log('INITIATION       : Apparently not supported for Naseer ');
   await sleep(1500);
   console.log('ATTITUDE         : ███████████ 99%');
   await sleep(3000);
@@ -178,7 +178,7 @@ export async function run() {
     if (options.width) {
       width = parseInt(options.width, 10);
       if (isNaN(width) || width <= 0) throw new Error('Invalid width');
-    } else if (isDefault || isKavanaMode) {
+    } else if (isDefault && !isKavanaMode) {
       width = 80;
     } else if (termInfo.width) {
       width = Math.max(10, termInfo.width - 2); 
@@ -194,7 +194,7 @@ export async function run() {
     const contrast = options.contrast ? parseFloat(options.contrast) : undefined;
     
     const color = options.color !== false;
-    const style = options.style || 'auto';
+    const style = options.style || (isKavanaMode ? 'blocks' : 'auto');
     
     if (options.debug) {
       console.log('[DEBUG] Terminal Info:', termInfo);
@@ -233,8 +233,8 @@ export async function run() {
       }
     }
 
-    // Default to true if it's the default or kavana mode, unless specified otherwise
-    const invert = options.invert !== undefined ? options.invert : (isDefault || isKavanaMode);
+    // Default to true for standard default, but false for Kavana mode to make it look realistic
+    const invert = options.invert !== undefined ? options.invert : (isKavanaMode ? false : isDefault);
 
     const ascii = renderAscii(data, actualWidth, actualHeight, {
       chars,
